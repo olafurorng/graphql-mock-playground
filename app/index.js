@@ -96,9 +96,12 @@ ReactDOM.render(
     variables={vars} >
     <GraphiQL.Footer>
       <p>
-      My Medium post about this demo: <a href="https://medium.com/p/692feda6e9cd">Mocking made easy</a><br/>
-      Github for this demo: <a href="https://github.com/apollostack/mock-demo">apollostack/mock-demo</a><br/>
-      Github for the graphql-tools project: <a href="https://github.com/apollostack/graphql-tools">apollostack/graphql-tools</a></p>
+      <h2>More information about this demo:</h2>
+      Medium post: <a href="https://medium.com/p/692feda6e9cd">Mocking made easy</a><br/>
+      GitHub repository for this demo: <a href="https://github.com/apollostack/mock-demo">apollostack/mock-demo</a><br/>
+      GitHub repository for the graphql-tools project: <a href="https://github.com/apollostack/graphql-tools">apollostack/graphql-tools</a><br/>
+      More information about Apollo <a href="http://www.apollostack.com">apollostack.com</a>
+      </p>
     </GraphiQL.Footer>
     </GraphiQL>
   , document.getElementById('app'));
