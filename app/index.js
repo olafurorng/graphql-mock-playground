@@ -1,40 +1,55 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
+import React from 'react';
 import GraphiQL from 'graphiql';
-import { addErrorLoggingToSchema } from 'graphql-tools';
-require('!style!css!../node_modules/graphiql/graphiql.css')
+// import { addErrorLoggingToSchema } from 'graphql-tools';
+require('!style!css!../node_modules/graphiql/graphiql.css');
+import { mockServer, MockList } from 'graphql-tools';
+import casual from 'casual-browserify';
 
-import {
-  graphql,
-  GraphQLSchema,
-  GraphQLString,
-  GraphQLInt,
-  GraphQLObjectType,
-  GraphQLNonNull,
-  GraphQLList,
-} from 'graphql';
+const shorthand = `
+  type User {
+    id: ID!
+    name: String
+    lists: [List]
+  }
 
-const schema = new GraphQLSchema({
-  query: new GraphQLObjectType({
-    name: 'RootQuery',
-    fields: {
-      leftpad: {
-        type: GraphQLString,
-        args: {
-          str: { type: new GraphQLNonNull(GraphQLString) },
-          len: { type: new GraphQLNonNull(GraphQLInt) },
-          ch: { type: GraphQLString, defaultValue: ' ' },
-        },
-        resolve: (root, { str, len, ch }) => {
-          return leftpad(str, len, ch);
-        },
-      },
-    },
-    description: 'Left-pad a string with a character until it has length len',
+  type List {
+    id: ID!
+    name: String
+    owner: User
+    incomplete_count: Int
+    tasks(completed: Boolean): [Task]
+  }
+
+  type Task {
+    id: ID!
+    text: String
+    completed: Boolean
+    list: List
+  }
+
+  type RootQuery {
+    user(id: ID): User
+  }
+
+  schema {
+    query: RootQuery
+  }
+`;
+
+const server = mockServer(shorthand, {
+  RootQuery: () => ({
+    user: (o, { id }) => ({ id }),
   }),
+  List: () => ({
+    name: () => casual.word,
+    tasks: () => new MockList(4, (o, { completed }) => ({ completed })),
+  }),
+  Task: () => ({ text: casual.words(10) }),
+  User: () => ({ name: casual.name }),
 });
 
-addErrorLoggingToSchema(schema, { log: (err) => console.log(err) });
+// addErrorLoggingToSchema(schema, { log: (err) => console.log(err) });
 
 function graphQLFetcher(graphQLParams) {
   let variables = {};
@@ -43,50 +58,36 @@ function graphQLFetcher(graphQLParams) {
   } catch (e) {
     // do nothing
   }
-  return graphql(
-    schema,
+  return server.query(
     graphQLParams.query,
-    {},
-    {},
-    variables,
-    graphQLParams.operationName
+    variables
   );
 }
 
-// left-pad function from https://github.com/azer/left-pad/pull/11
-const leftpad = (str, len, ch) => {
-  str = String(str);
 
-  if (!ch && ch !== 0) ch = ' ';
-
-  len = len - str.length;
-  if (len <= 0) return str;
-
-  ch = ch + '';
-  var pad = '';
-  while (true) {
-    if (len & 1) pad += ch;
-    len >>= 1;
-    if (len) ch += ch;
-    else break;
+const query = `query tasksForUser{
+  user(id: 6) {
+    id
+    name
+    lists {
+      name
+      completeTasks: tasks(completed: true) {
+        completed
+        text
+      }
+      incompleteTasks: tasks(completed: false) {
+        completed
+        text
+      }
+      anyTasks: tasks {
+        completed
+        text
+      }
+    }
   }
-  return pad + str;
-};
-
-const query = `query pad($str: String!, $len: Int!, $ch: String){
-  pad_with_space: leftpad(str:"foo", len: 5),
-  pad_too_short: leftpad(str: "foobar", len: 6),
-  pad_with_zero: leftpad(str: "1", len: 2, ch: "0"),
-  pad_using_var: leftpad(str: $str, len: $len, ch: $ch)
 }`;
 
-const vars = `{
-  "str": "> apollostack.com",
-  "len": 25,
-  "ch": "~"
-}`;
-
-graphql(schema, query)
+const vars = '';
 
 ReactDOM.render(
   <GraphiQL
@@ -94,7 +95,10 @@ ReactDOM.render(
     query={query}
     variables={vars} >
     <GraphiQL.Footer>
-      <h1>Hello World!</h1>
+      <p>
+      My Medium post about this demo: <a href="https://medium.com/p/692feda6e9cd">Mocking made easy</a><br/>
+      Github for this demo: <a href="https://github.com/apollostack/mock-demo">apollostack/mock-demo</a><br/>
+      Github for the graphql-tools project: <a href="https://github.com/apollostack/graphql-tools">apollostack/graphql-tools</a></p>
     </GraphiQL.Footer>
     </GraphiQL>
   , document.getElementById('app'));
