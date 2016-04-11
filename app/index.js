@@ -115,7 +115,7 @@ ReactDOM.render(
     <GraphiQL.Footer>
       <p>
       <h2>More information about this demo:</h2>
-      Medium post: <a href="https://medium.com/p/692feda6e9cd">Mocking made easy</a><br/>
+      Medium post: <a href="https://medium.com/p/692feda6e9cd">Mocking your backend with just one line of code</a><br/>
       GitHub repository for this demo: <a href="https://github.com/apollostack/mock-demo">apollostack/mock-demo</a><br/>
       GitHub repository for the graphql-tools project: <a href="https://github.com/apollostack/graphql-tools">apollostack/graphql-tools</a><br/>
       More information about Apollo <a href="http://www.apollostack.com">apollostack.com</a>
