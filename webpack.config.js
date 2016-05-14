@@ -33,6 +33,10 @@ module.exports = {
       {
         test: /\.less$/,
         loader: 'style!css!less?modules!postcss'
+      },
+      {
+        test: /\.json$/,
+        loader: 'json'
       }
     ]
   },

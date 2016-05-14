@@ -4,6 +4,7 @@ import GraphiQL from 'graphiql';
 // import { addErrorLoggingToSchema } from 'graphql-tools';
 require('!style!css!../node_modules/graphiql/graphiql.css');
 import { mockServer, MockList } from 'graphql-tools';
+import { formatError } from 'graphql';
 import casual from 'casual-browserify';
 
 const shorthand = `
@@ -30,6 +31,7 @@ const shorthand = `
 
   type RootQuery {
     user(id: ID): User
+    users(num: Int): [User]
   }
 
   schema {
@@ -39,14 +41,21 @@ const shorthand = `
 
 const server = mockServer(shorthand, {
   RootQuery: () => ({
+    // return a user whose id matches that of the request
     user: (o, { id }) => ({ id }),
+    // return a list with num users in it
+    users: (o, { num }) => new MockList(num),
   }),
   List: () => ({
-    name: () => casual.word,
-    tasks: () => new MockList(4, (o, { completed }) => ({ completed })),
+    name: () => casual.title,
+    // return a list with 2 - 6 tasks
+    tasks: () => new MockList([2, 6], (o, { completed }) => ({ completed })),
   }),
-  Task: () => ({ text: casual.words(10) }),
-  User: () => ({ name: casual.name }),
+  Task: () => ({ text: casual.sentence }),
+  User: () => ({
+    name: casual.full_name,
+    lists: () => new MockList(3, (user) => ({ owner: user.id })),
+  }),
 });
 
 // addErrorLoggingToSchema(schema, { log: (err) => console.log(err) });
@@ -61,7 +70,13 @@ function graphQLFetcher(graphQLParams) {
   return server.query(
     graphQLParams.query,
     variables
-  );
+  ).then((res) => {
+    console.log(res);
+    if (res.errors){
+      res.errors = res.errors.map(formatError)
+    }
+    return res;
+  });
 }
 
 
@@ -85,6 +100,9 @@ const query = `query tasksForUser{
       }
     }
   }
+  users(num: 3){
+    name
+  }
 }`;
 
 const vars = '';
@@ -97,7 +115,7 @@ ReactDOM.render(
     <GraphiQL.Footer>
       <p>
       <h2>More information about this demo:</h2>
-      Medium post: <a href="https://medium.com/p/692feda6e9cd">Mocking made easy</a><br/>
+      Medium post: <a href="https://medium.com/p/692feda6e9cd">Mocking your backend with just one line of code</a><br/>
       GitHub repository for this demo: <a href="https://github.com/apollostack/mock-demo">apollostack/mock-demo</a><br/>
       GitHub repository for the graphql-tools project: <a href="https://github.com/apollostack/graphql-tools">apollostack/graphql-tools</a><br/>
       More information about Apollo <a href="http://www.apollostack.com">apollostack.com</a>
