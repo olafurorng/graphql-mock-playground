@@ -5,4 +5,10 @@ A demo of the simple yet powerful mocking capability in graphql-tools.
 
 [Contribute to this project on apollostack/graphql-tools](https://github.com/apollostack/graphql-tools)
 
-More documentation coming soon.
+To run the demo yourself, git clone the repo and then
+```
+npm install
+npm start
+```
+point your browser at http://localhost:8080 to see the demo.
+
