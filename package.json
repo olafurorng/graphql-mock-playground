@@ -28,7 +28,7 @@
   "homepage": "https://github.com/apollostack/mock-demo#readme",
   "dependencies": {
     "casual-browserify": "^1.5.2",
-    "graphiql": "^0.6.5",
+    "graphiql": "^0.7.1",
     "graphql-tools": "^0.2.0",
     "html-webpack-plugin": "^2.14.0",
     "react": "^0.14.7",
