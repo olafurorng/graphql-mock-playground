@@ -1,3 +1,5 @@
+> *NOTE*: this demo uses an old version of graphql-tools (0.2.0), although a similar technique should work with the latest version.
+
 # mock-demo
 A demo of the simple yet powerful mocking capability in graphql-tools.
 
