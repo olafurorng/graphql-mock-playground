@@ -72,7 +72,7 @@ function graphQLFetcher(graphQLParams) {
     variables
   ).then((res) => {
     console.log(res);
-    if (res.errors){
+    if (res.errors) {
       res.errors = res.errors.map(formatError)
     }
     return res;
@@ -86,6 +86,7 @@ const query = `query tasksForUser{
     name
     lists {
       name
+      owner
       completeTasks: tasks(completed: true) {
         completed
         text

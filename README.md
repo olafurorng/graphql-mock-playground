@@ -2,6 +2,7 @@
 
 # GraphQL Tools
 Playground for simple and yet powerful mocking capability in graphql-tools [apollostack/graphql-tools](https://github.com/apollostack/graphql-tools).
+
 [See blog](http://graphql.org/blog/mocking-with-graphql/)
 
 [See this demo in action](https://apollostack.github.io/mock-demo).
